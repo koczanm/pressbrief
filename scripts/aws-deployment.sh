@@ -32,9 +32,17 @@ if [[ -z "${DROPBOX_ACCESS_TOKEN}" ]]; then
 
 fi
 
+parameters=()
+parameters+=("ParameterKey=DropboxAccessToken,ParameterValue=${DROPBOX_ACCESS_TOKEN}")
+[[ -n "${LIMIT_PER_RSS}" ]] && parameters+=("ParameterKey=LimitPerRSS,ParameterValue=${LIMIT_PER_RSS}")
+[[ -n "${URL2QR}" ]] && parameters+=("ParameterKey=URL2QR,ParameterValue=${URL2QR}")
+
 echo "Checking if stack exists ..."
 
-aws cloudformation describe-stacks --stack-name PressbriefStack 1>/dev/null 2>&1
+aws cloudformation describe-stacks \
+    --stack-name PressbriefStack \
+1>/dev/null 2>&1
+
 status=$?
 
 if [[ $status -ne 0 ]] ; then
@@ -45,15 +53,13 @@ if [[ $status -ne 0 ]] ; then
         --stack-name PressbriefStack \
         --template-body file://aws-resources.yaml \
         --capabilities CAPABILITY_NAMED_IAM \
-        --parameters \
-            ParameterKey=ConsumerKey,ParameterValue="${CONSUMER_KEY}" \
-            ParameterKey=ConsumerSecret,ParameterValue="${CONSUMER_SECRET}" \
-            ParameterKey=DropboxAccessToken,ParameterValue="${DROPBOX_ACCESS_TOKEN}" \
-            ParameterKey=TargetUsername,ParameterValue="${TARGET_USERNAME}" 1>/dev/null
+        --parameters "${parameters[@]}" \
+    1>/dev/null
 
     echo "Waiting for stack to be created ..."
 
-    aws cloudformation wait stack-create-complete --stack-name PressbriefStack
+    aws cloudformation wait stack-create-complete \
+        --stack-name PressbriefStack
 
 else
 
@@ -64,11 +70,8 @@ else
                 --stack-name PressbriefStack \
                 --template-body file://aws-resources.yaml \
                 --capabilities CAPABILITY_NAMED_IAM \
-                --parameters \
-                    ParameterKey=ConsumerKey,ParameterValue=${CONSUMER_KEY} \
-                    ParameterKey=ConsumerSecret,ParameterValue=${CONSUMER_SECRET} \
-                    ParameterKey=DropboxAccessToken,ParameterValue=${DROPBOX_ACCESS_TOKEN} \
-                    ParameterKey=TargetUsername,ParameterValue=${TARGET_USERNAME} 2>&1)
+                --parameters "${parameters[@]}" \
+             2>&1)
     status=$?
     set -e
 
@@ -86,7 +89,8 @@ else
 
         echo "Waiting for stack update to complete ..."
         
-        aws cloudformation wait stack-update-complete --stack-name PressbriefStack
+        aws cloudformation wait stack-update-complete \
+            --stack-name PressbriefStack
     
     fi
 
@@ -94,6 +98,9 @@ fi
 
 echo "Deploying Python function to Lambda ..."
 
-aws lambda update-function-code --function-name Pressbrief --zip-file fileb://function.zip 1>/dev/null
+aws lambda update-function-code \
+    --function-name Pressbrief \
+    --zip-file fileb://function.zip \
+1>/dev/null
 
 echo "Deployment completed successfully"

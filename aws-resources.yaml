@@ -16,10 +16,9 @@ Resources:
       Timeout: 900
       Environment:
         Variables:
-          CONSUMER_KEY: !Ref ConsumerKey
-          CONSUMER_SECRET: !Ref ConsumerSecret
           DROPBOX_ACCESS_TOKEN: !Ref DropboxAccessToken
-          TARGET_USERNAME: !Ref TargetUsername
+          LIMIT_PER_RSS: !Ref LimitPerRSS
+          URL2QR: !Ref URL2QR
   PressbriefRole:
     Type: AWS::IAM::Role
     Properties:
@@ -65,16 +64,18 @@ Resources:
           - PressbriefSchedule
           - Arn
 Parameters:
-  ConsumerKey:
-    Type: String
-  ConsumerSecret:
-    Type: String
   DropboxAccessToken:
     Type: String
-  TargetUsername:
-    Type: String
-  BriefPeriod:
+    Description: An access token to save briefs on Dropbox.
+  LimitPerRSS:
     Type: Number
-    Default: 1
+    Description: The maximum number of news from one RSS feed to include.
+    Default: 4
     MinValue: 1
-    MaxValue: 7
+  URL2QR:
+    Type: String
+    Description: The flag indicating whether URLs should be converted to QR codes.
+    Default: "True"
+    AllowedValues:
+      - "True"
+      - "False"
