@@ -36,13 +36,22 @@ class Newspaper:
         return filter(self._is_today_news, rss_entries)
 
     def _extract_news(self, rss_entry: feedparser.FeedParserDict) -> News:
-        title = rss_entry.title
-        summary = rss_entry.summary
-        url = rss_entry.link
-        published_date = (
-            rss_entry.published_parsed if hasattr(rss_entry, "published_parsed") else rss_entry.updated_parsed
-        )
-        author = rss_entry.author if hasattr(rss_entry, "author") else None
+        try:
+            title = rss_entry.title
+            summary = (
+                rss_entry.summary if hasattr(rss_entry, "summary") else
+                rss_entry.description if hasattr(rss_entry, "description") else
+                rss_entry.subtitle if hasattr(rss_entry, "subtitle")
+            )
+            url = rss_entry.link
+            published_date = (
+                rss_entry.published_parsed if hasattr(rss_entry, "published_parsed") else 
+                rss_entry.updated_parsed if hasattr(rss_entry, "updated_parsed") else
+                rss_entry.date_parsed
+            )
+            author = rss_entry.author if hasattr(rss_entry, "author") else None
+        except AttributeError as e:
+            self.logger.warning(f"Invalid data schema ({e.args}), skipping ...")
 
         return News(title, summary, url, published_date, author)
 
@@ -50,6 +59,7 @@ class Newspaper:
         published_time = (
             rss_entry.published_parsed if hasattr(rss_entry, "published_parsed") else
             rss_entry.updated_parsed if hasattr(rss_entry, "updated_parsed") else 
+            rss_entry.date_parsed if hasattr(rss_entry, "date_parsed") else
             None
         )
         time_diff = (time.mktime(time.gmtime()) - time.mktime(published_time)) / 3600
