@@ -8,7 +8,7 @@ from typing import Any
 import yaml
 from aws_lambda_context import LambdaContext
 from dropbox import Dropbox
-from dropbox.exceptions import AuthError, BadInputError
+from dropbox.exceptions import ApiError, AuthError, BadInputError
 
 from exporter.pdf_exporter import PDFExporter
 from newspaper.newspaper import Newspaper
