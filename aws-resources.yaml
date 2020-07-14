@@ -12,7 +12,7 @@ Resources:
           def lambda_handler(event, context):
             pass
       Runtime: python3.6
-      MemorySize: 128
+      MemorySize: 512
       Timeout: 900
       Environment:
         Variables:
