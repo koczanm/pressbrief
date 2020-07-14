@@ -41,7 +41,7 @@ class Newspaper:
             summary = (
                 rss_entry.summary if hasattr(rss_entry, "summary") else
                 rss_entry.description if hasattr(rss_entry, "description") else
-                rss_entry.subtitle if hasattr(rss_entry, "subtitle")
+                rss_entry.subtitle
             )
             url = rss_entry.link
             published_date = (
