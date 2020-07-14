@@ -21,15 +21,18 @@ install: ## Install requirements
 install-dev: ## Install dev requirements
 	pipenv install --dev
 
+.PHONY: clean 
+clean: clean-pyc clean-build ## Remove Python and build artifacts
+
 .PHONY: clean-pyc
-clean-pyc: ## Remove python artifacts
+clean-pyc: ## Remove Python artifacts
 	find pressbrief/ -name "__pycache__" -exec rm -rf {} +
 	find pressbrief/ -name "*.pyc" -exec rm -f {} +
 	find pressbrief/ -name "*.pyo" -exec rm -f {} +
 	find pressbrief/ -name "*~" -exec rm -f {} +
 
 .PHONY: clean-build
-clean-build: ## Remove build artifact
+clean-build: ## Remove build artifacts
 	rm -rf pressbrief/build/
 	rm -rf pressbrief/dist/
 	rm -rf pressbrief/*.egg-info
