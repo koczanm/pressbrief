@@ -2,6 +2,10 @@
 
 A user-controlled automation for generating daily press briefs.
 
+## Why
+
+Wouldn't it be nice and relaxing to be able to stay up to date with information provided by various daily newspaper publishers without the need to actually engage in all the Social Web nonsense? Without pseudo social interactions? Without being subject to publishers' alogrithms which decide what one sees and what we overlook?
+
 ## What
 
 This project is a user-controlled automation (packaged to conveniently run in a docker container) for generating daily press briefs. This machinery expects only one essential input file:
